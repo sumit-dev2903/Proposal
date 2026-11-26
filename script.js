@@ -1,27 +1,50 @@
 
-const pages = document.querySelectorAll(".page");
+const envelope = document.getElementById("envelope");
+const openLetter = document.getElementById("openLetter");
+const envelopeSection = document.getElementById("envelopeSection");
+const diary = document.getElementById("diary");
 
+const pages = document.querySelectorAll(".page");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
 const pageCount = document.getElementById("pageCount");
 const progress = document.getElementById("progress");
-const navLabel = document.getElementById("navLabel");
+const chapterName = document.getElementById("chapterName");
 
 let currentPage = 0;
+let opened = false;
 
-const chapterNames = [
+const chapters = [
   "The Beginning",
-  "Dear Kajal",
-  "The Vision",
-  "Coding Journey",
-  "Hackathon Adventures",
-  "Our Team",
-  "Working Roadmap",
-  "Our Goals",
-  "The Invitation"
+  "A Little Introduction",
+  "Why You Are Special",
+  "Things I Never Said",
+  "My Favourite Feeling",
+  "My Little Dreams",
+  "A Little Promise",
+  "Our Little Universe",
+  "One Special Question",
+  "The Final Chapter"
 ];
 
+// Open envelope
+openLetter.addEventListener("click", () => {
+  if (opened) return;
+
+  opened = true;
+  envelope.classList.add("open");
+  openLetter.style.opacity = "0";
+
+  setTimeout(() => {
+    envelopeSection.style.display = "none";
+    diary.classList.add("show");
+    showPage(0);
+    diary.scrollIntoView({ behavior: "smooth" });
+  }, 1100);
+});
+
+// Change notebook pages
 function showPage(index) {
   pages.forEach((page, i) => {
     page.classList.toggle("active", i === index);
@@ -38,12 +61,7 @@ function showPage(index) {
   progress.style.width =
     `${((index + 1) / pages.length) * 100}%`;
 
-  navLabel.textContent = chapterNames[index];
-
-  document.querySelector(".notebook").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
+  chapterName.textContent = chapters[index];
 }
 
 nextBtn.addEventListener("click", () => {
@@ -58,22 +76,10 @@ prevBtn.addEventListener("click", () => {
   }
 });
 
-document.getElementById("acceptBtn").addEventListener("click", () => {
-  const message = document.getElementById("responseMessage");
-
-  message.textContent =
-    "A new chapter begins! Let's make something amazing together. ✨";
-});
-
-document.getElementById("thinkBtn").addEventListener("click", () => {
-  const message = document.getElementById("responseMessage");
-
-  message.textContent =
-    "Of course! Take your time. Every good idea deserves a thoughtful decision. ♡";
-});
-
 // Keyboard navigation
 document.addEventListener("keydown", (event) => {
+  if (!diary.classList.contains("show")) return;
+
   if (event.key === "ArrowRight" && currentPage < pages.length - 1) {
     showPage(currentPage + 1);
   }
@@ -83,4 +89,44 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-showPage(0);
+// Proposal responses
+const answerMessage = document.getElementById("answerMessage");
+
+document.getElementById("yesBtn").addEventListener("click", () => {
+  answerMessage.textContent =
+    "A beautiful new chapter begins! ❤️✨";
+
+  createHearts(35);
+});
+
+document.getElementById("timeBtn").addEventListener("click", () => {
+  answerMessage.textContent =
+    "Take all the time you need, Kajal. Your feelings matter. ♡";
+});
+
+document.getElementById("noBtn").addEventListener("click", () => {
+  answerMessage.textContent =
+    "Thank you for being honest, Kajal. I respect your feelings. ♡";
+});
+
+// Floating hearts
+function createHearts(amount = 1) {
+  const container = document.getElementById("hearts");
+
+  for (let i = 0; i < amount; i++) {
+    const heart = document.createElement("span");
+
+    heart.className = "floating-heart";
+    heart.textContent = Math.random() > 0.5 ? "♡" : "♥";
+
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (12 + Math.random() * 20) + "px";
+    heart.style.animationDuration = (3 + Math.random() * 4) + "s";
+
+    container.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 7500);
+  }
+}
+
+setInterval(() => createHearts(2), 1800);
